@@ -1,7 +1,7 @@
 # bitbloq-tools
 A set of python bitbloq tools to work with documents
 
-# JSOn viewer
+# JSON viewer
 You must install a JSON viewer in Google Chrome.
 
 [JSONView](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) could be an option.
