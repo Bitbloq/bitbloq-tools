@@ -6,7 +6,7 @@ You must install a JSON viewer in Google Chrome.
 
 [JSONView](https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc) could be an option.
 
-If JSON viewer is used, you must enable `Allow access to file URL` from [JSON config page](chrome://extensions/?id=chklaanhfefbnpoihckbnefhakgolnmc).
+If JSON viewer is used, you must enable `Allow access to file URL` from JSON config page -> `chrome://extensions/?id=chklaanhfefbnpoihckbnefhakgolnmc`
 
 # How to
 1. Open a terminal and go to `src` directory
