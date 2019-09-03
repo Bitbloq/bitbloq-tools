@@ -5,7 +5,7 @@ import random
 import string
 import webbrowser
 
-message = ["","Mergeando la vida", "La vida es vella"]
+message = ["","Merge your life", "We love JSONs", "Make the difference"]
 
 def remove_char(s):
     return s[ 1:len(s) - 1]
@@ -21,6 +21,7 @@ system('clear')
 print("Tools:")
 print("1 - Merger")
 print("2 - Prettify")
+print("3 - Change name")
 #Ask the users
 print("\r\n")
 tool = int(input("Choose a tool: "))
@@ -40,6 +41,11 @@ if tool == 1:
     print("\r\n")
     baseFile = int(input("Choose a base file: "))
     contentFile = int(input("Choose a secondary file: "))
+    nameFlag = str(raw_input("Use base file name for the merge file? y/n: ") )
+    if nameFlag == "y":
+        name = onlyfiles[baseFile].split(".")[0]
+    else:
+        name = str(raw_input("New name: ") )
 
     originIDs = []
     new = {}
@@ -70,15 +76,15 @@ if tool == 1:
 
     #Append content to new file and change the document title
     new["content"] = json.dumps(contents)
-    new["title"] = "Merge"
+    new["title"] = name
     #Save the new file
-    with open('merge.3d.bitbloq', 'w') as outfile:
+    with open(name + '.3d.bitbloq', 'w') as outfile:
         json.dump(new, outfile)
 
 elif tool == 2:
     #Ask the user
     print("\r\n")
-    baseFile = int(input("Elige el archivo: "))
+    baseFile = int(input("Choose the file: "))
 
     #Read the file
     data = {}
@@ -102,3 +108,17 @@ elif tool == 2:
     file_path = "./" + name
     webbrowser.get(chrome_path).open(file_path)
     print("\r\nOpening in Google Chrome. Remember to install a JSON viewer in Chrome.");
+
+elif tool == 3:
+
+    baseFile = int(input("Choose the file: "))
+    name = str(raw_input("New name: "))
+
+    #Read the file
+    data = {}
+    with open(onlyfiles[baseFile]) as json_file:
+        data = json.load(json_file)
+        data["title"] = name
+
+    with open(name + '.3d.bitbloq', 'w') as outfile:
+        json.dump(data, outfile)
