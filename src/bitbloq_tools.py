@@ -5,7 +5,7 @@ import random
 import string
 import webbrowser
 
-message = ["","Merge your life", "We love JSONs", "Make the difference"]
+message = ["","Merge your life", "We love JSONs", "Make the difference", "Air purifier"]
 
 def remove_char(s):
     return s[ 1:len(s) - 1]
@@ -16,109 +16,154 @@ def change(id):
         if not newId in originIDs:
             originIDs.append(newId)
             return newId
-#Show menu options
-system('clear')
-print("Tools:")
-print("1 - Merger")
-print("2 - Prettify")
-print("3 - Change name")
-#Ask the users
-print("\r\n")
-tool = int(input("Choose a tool: "))
-
-#Read files
-onlyfiles = [f for f in listdir("./") if isfile(join("./", f))]
-#Show files
-system('clear')
-print(message[tool])
-index = 0
-for file in onlyfiles:
-    print(str(index) + " - " + file);
-    index += 1
-
-if tool == 1:
-    #Ask the user
+tool = -1
+while not tool == 0:
+    #Show menu options
+    system('clear')
+    print("Tools:")
+    print("1 - Merger")
+    print("2 - Prettify")
+    print("3 - Change name")
+    print("4 - Delete a parent object")
+    print("--------------------------")
+    print("0 - Close Bitbloq Tools")
+    #Ask the users
     print("\r\n")
-    baseFile = int(input("Choose a base file: "))
-    contentFile = int(input("Choose a secondary file: "))
-    nameFlag = str(raw_input("Use base file name for the merge file? y/n: ") )
-    if nameFlag == "y":
-        name = onlyfiles[baseFile].split(".")[0]
-    else:
-        name = str(raw_input("New name: ") )
+    tool = int(input("Choose a tool: "))
 
-    originIDs = []
-    new = {}
-    contents = []
+    if not tool == 0:
+        #Read files
+        onlyfiles = [f for f in listdir("./") if f.endswith(".bitbloq") and isfile(join("./", f))]
+        #Show files
+        system('clear')
+        print(message[tool])
+        index = 0
+        for file in onlyfiles:
+            print(str(index) + " - " + file);
+            index += 1
 
-    #Open base file
-    with open(onlyfiles[baseFile]) as json_file:
-        data = json.load(json_file)
-        new = data
-        contents = json.loads(data["content"])
-        #Get all parents ids
-        for o in contents:
-            originIDs.append(o["id"])
+    if tool == 0:
+        system('clear')
+        print('Bye')
+    elif tool == 1:
+        #Ask the user
+        print("\r\n")
+        baseFile = int(input("Choose a base file: "))
+        contentFile = int(input("Choose a secondary file: "))
+        nameFlag = str(raw_input("Use base file name for the merge file? y/n: ") )
+        if nameFlag == "y":
+            name = onlyfiles[baseFile].split(".")[0]
+        elif nameFlag == "n":
+            name = str(raw_input("New name: ") )
+        else:
+            name = nameFlag
 
-    #Open secondary file
-    with open(onlyfiles[contentFile]) as json_file:
-        data = json.load(json_file)
-        secondaryContents = json.loads(data["content"])
-        #Verify first level IDs
-        for o in secondaryContents:
-            #Change the id if it is repeated
-            if o["id"] in originIDs:
-                local = o
-                local["id"] = change(local["id"])
-                contents.append(o)
-            else:
-                contents.append(o)
+        originIDs = []
+        new = {}
+        contents = []
 
-    #Append content to new file and change the document title
-    new["content"] = json.dumps(contents)
-    new["title"] = name
-    #Save the new file
-    with open(name + '.3d.bitbloq', 'w') as outfile:
-        json.dump(new, outfile)
+        #Open base file
+        with open(onlyfiles[baseFile]) as json_file:
+            data = json.load(json_file)
+            new = data
+            contents = json.loads(data["content"])
+            #Get all parents ids
+            for o in contents:
+                originIDs.append(o["id"])
 
-elif tool == 2:
-    #Ask the user
-    print("\r\n")
-    baseFile = int(input("Choose the file: "))
+        #Open secondary file
+        with open(onlyfiles[contentFile]) as json_file:
+            data = json.load(json_file)
+            secondaryContents = json.loads(data["content"])
+            #Verify first level IDs
+            for o in secondaryContents:
+                #Change the id if it is repeated
+                if o["id"] in originIDs:
+                    local = o
+                    local["id"] = change(local["id"])
+                    contents.append(o)
+                else:
+                    contents.append(o)
 
-    #Read the file
-    data = {}
-    with open(onlyfiles[baseFile]) as json_file:
-        data = json.load(json_file)
-        #Format the content string
-        content = data["content"]
-        data["content"] = json.loads(content)
+        #Append content to new file and change the document title
+        new["content"] = json.dumps(contents)
+        new["title"] = name
+        #Save the new file
+        with open(name + '.3d.bitbloq', 'w') as outfile:
+            json.dump(new, outfile)
 
-    #print(json.dumps(data, indent=4, sort_keys=True));
+    elif tool == 2:
+        #Ask the user
+        print("\r\n")
+        baseFile = int(input("Choose the file: "))
 
-    #Change document title and file name
-    data["title"] = data["title"] + "_pretty"
-    name = onlyfiles[baseFile].split(".")[0] + "_pretty.json"
-    #Save the document as JSON
-    with open(name, 'w') as outfile:
-        json.dump(data, outfile)
+        #Read the file
+        data = {}
+        with open(onlyfiles[baseFile]) as json_file:
+            data = json.load(json_file)
+            #Format the content string
+            content = data["content"]
+            data["content"] = json.loads(content)
 
-    #Open the webbrowser
-    chrome_path = '/usr/bin/google-chrome %s'
-    file_path = "./" + name
-    webbrowser.get(chrome_path).open(file_path)
-    print("\r\nOpening in Google Chrome. Remember to install a JSON viewer in Chrome.");
+        #print(json.dumps(data, indent=4, sort_keys=True));
 
-elif tool == 3:
+        #Change document title and file name
+        data["title"] = data["title"] + "_pretty"
+        name = onlyfiles[baseFile].split(".")[0] + "_pretty.json"
+        #Save the document as JSON
+        with open(name, 'w') as outfile:
+            json.dump(data, outfile)
 
-    baseFile = int(input("Choose the file: "))
-    name = str(raw_input("New name: "))
+        #Open the webbrowser
+        chrome_path = '/usr/bin/google-chrome %s'
+        file_path = "./" + name
+        webbrowser.get(chrome_path).open(file_path)
+        print("\r\nOpening in Google Chrome. Remember to install a JSON viewer in Chrome.");
 
-    #Read the file
-    data = {}
-    with open(onlyfiles[baseFile]) as json_file:
-        data = json.load(json_file)
+    elif tool == 3:
+
+        baseFile = int(input("Choose the file: "))
+        name = str(raw_input("New name: "))
+
+        #Read the file
+        data = {}
+        with open(onlyfiles[baseFile]) as json_file:
+            data = json.load(json_file)
+            data["title"] = name
+
+        with open(name + '.3d.bitbloq', 'w') as outfile:
+            json.dump(data, outfile)
+
+    elif tool == 4:
+
+        baseFile = int(input("Choose the file: "))
+
+
+        #Read the file
+        data = {}
+        with open(onlyfiles[baseFile]) as json_file:
+            data = json.load(json_file)
+            contents = json.loads(data['content'])
+
+            index = 0
+            for name in contents:
+                print str(index) + ' - ' + name['viewOptions']['name']
+                index += 1
+
+            #make changes
+            objectIndex = int(input("Choose the object to delete: "))
+            contents.pop(objectIndex)
+            data['content'] = json.dumps(contents)
+
+        #Chane the name
+        nameFlag = str(raw_input("Use base file name for the new file? y/n: ") )
+        if nameFlag == "y":
+            name = onlyfiles[baseFile].split(".")[0]
+        elif nameFlag == "n":
+            name = str(raw_input("New name: ") )
+        else:
+            name = nameFlag
         data["title"] = name
 
-    with open(name + '.3d.bitbloq', 'w') as outfile:
-        json.dump(data, outfile)
+        with open(name + '.3d.bitbloq', 'w') as outfile:
+             json.dump(data, outfile)
